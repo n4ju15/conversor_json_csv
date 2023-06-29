@@ -33,18 +33,29 @@ function csvToJson(csv) {
     const headers = lines[0].split(",");
     const json = []
 
+    const preTags = document.querySelectorAll("pre");
+    preTags.forEach((tag) => {
+        tag.remove();
+    });
+
     for(let i = 1; i < lines.length; i++) {
-        const values = lines.splite(",");
+        const values = lines[i].split(",");
         const row = {}
 
         for(let j = 0; j < headers.length; j++) {
-            let value = values[j]
+            let value = values[j];
 
             if(value[0] === "{" || value[0] === "[") {
-                
+                value = JSON.parse(value);
             }
+
+            row[headers[j]] = value;
         }
+
+        json.push(row);
     }
+
+    return json;
 }
 
 jsonToCsvButton.addEventListener("click", function() {
@@ -80,4 +91,12 @@ function downloadCsv(csv) {
     downloadLink.click();
 
     document.body.removeChild(downloadLink);
+}
+
+function displayJson(json) {
+    const resultArea = document.createElement("pre");
+
+    resultArea.textContent = JSON.stringify(json, null, 2);
+
+    document.body.appendChild(resultArea);
 }
